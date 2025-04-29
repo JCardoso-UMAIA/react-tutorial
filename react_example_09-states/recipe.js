@@ -11,18 +11,18 @@ Star.propTypes = {
 };
 
 // StarRating Component
-class Recipe extends React.Component {
-    render() {
-    return e(
-    'section',
-    {id: this.props.id},
-    e(Summary, {name: this.props.name, ingredients: this.props.items.length, steps: 
-   this.props.instructions.length}),
-    e(IngredientsList, {items: this.props.items}),
-    e(Instructions, {instructions: this.props.instructions}),
-    e(StarRating)
-    );
+class StarRating extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            starsSelected: props.starsSelected || 0,
+            currentTime: new Date().toLocaleString(),
+        };
+        this.change = this.change.bind(this);
     }
+
+    change(starsSelected) {
+        this.setState({ starsSelected, currentTime: new Date().toLocaleString() });
     }
 
     render() {
