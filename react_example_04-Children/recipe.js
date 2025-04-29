@@ -1,6 +1,7 @@
 'use strict';
 const e = React.createElement;
 
+<<<<<<< HEAD
 class Recipe extends React.Component {
     render() {
         return e('section', { id: 'baked-salmon' },
@@ -28,3 +29,7 @@ class Recipe extends React.Component {
 
 const root = ReactDOM.createRoot(document.getElementById('react-container'));
 root.render(e(Recipe));
+=======
+const root = ReactDOM.createRoot(document.getElementById('react-container'));
+root.render(e(Recipe));
+>>>>>>> ee34fc9467467af9a722991dfff7580df532900b

@@ -2,11 +2,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>React Example 08</title>
+    <title>React Example 09</title>
     <script src="https://unpkg.com/react@18.2.0/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
     <script src="https://unpkg.com/prop-types@15.6/prop-types.js"></script>
+    <link rel="stylesheet" href="star.css" />
   </head>
   <body>
     <!-- Target container -->
@@ -14,6 +15,65 @@
     <script type="text/babel">
       'use strict';
       const e = React.createElement;
+
+      // Star component
+      const Star = ({ selected = false, onClick = f => f }) =>
+          e('span', {
+              style: {
+                  cursor: 'pointer',
+                  height: '25px',
+                  width: '25px',
+                  margin: '2px',
+                  float: 'left',
+                  backgroundColor: selected ? 'red' : 'grey',
+                  clipPath: 'polygon(50% 0%, 63% 38%, 100% 38%, 69% 59%, 82% 100%, 50% 75%, 18% 100%, 31% 59%, 0% 38%, 37% 38%)',
+              },
+              onClick: onClick,
+          });
+
+      // StarRating component
+      class StarRating extends React.Component {
+          constructor(props) {
+              super(props);
+              this.state = {
+                  starsSelected: props.starsSelected || 0,
+                  currentTime: new Date().toLocaleString(),
+              };
+              this.change = this.change.bind(this);
+          }
+
+          change(starsSelected) {
+              this.setState({ starsSelected, currentTime: new Date().toLocaleString() });
+          }
+
+          render() {
+              const { totalStars } = this.props;
+              const { starsSelected } = this.state;
+              console.log(this.state.currentTime);
+              return e(
+                  'div',
+                  { className: 'star-rating' },
+                  [...Array(totalStars)].map((n, i) =>
+                      e(Star, {
+                          key: i,
+                          selected: i < starsSelected,
+                          onClick: () => this.change(i + 1),
+                      })
+                  ),
+                  e('p', null, `${starsSelected} of ${totalStars} stars`)
+              );
+          }
+      }
+
+      StarRating.propTypes = {
+          totalStars: PropTypes.number,
+          starsSelected: PropTypes.number,
+      };
+
+      StarRating.defaultProps = {
+          totalStars: 5,
+          starsSelected: 0,
+      };
 
       // Summary component
       class Summary extends React.Component {
@@ -52,6 +112,20 @@
           }
       }
 
+      // Instructions component
+      class Instructions extends React.Component {
+          render() {
+              return e(
+                  'section',
+                  { className: 'instructions' },
+                  e('h2', null, 'Cooking Instructions'),
+                  this.props.instructions.map((instruction, i) =>
+                      e('p', { key: i }, instruction)
+                  )
+              );
+          }
+      }
+
       // Recipe component
       class Recipe extends React.Component {
           static propTypes = {
@@ -74,18 +148,11 @@
                   e(Summary, {
                       name: this.props.name,
                       ingredientsCount: this.props.ingredients.length,
-                      stepsCount: this.props.instructions.length
+                      stepsCount: this.props.instructions.length,
                   }),
-                  e(IngredientsList, { items: this.props.ingredients }), // Use IngredientsList here
-                  e(
-                      'section',
-                      { className: 'instructions' },
-                      e('h2', null, 'Cooking Instructions'),
-                      // Dynamically create paragraphs for instructions
-                      this.props.instructions.map((instruction, i) =>
-                          e('p', { key: i }, instruction)
-                      )
-                  )
+                  e(IngredientsList, { items: this.props.ingredients }),
+                  e(Instructions, { instructions: this.props.instructions }),
+                  e(StarRating, { totalStars: 5 })
               );
           }
       }
