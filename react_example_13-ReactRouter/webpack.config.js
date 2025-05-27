@@ -22,6 +22,9 @@ module.exports = {
     },
     resolve: {
         extensions: ['.js', '.jsx'], // Resolve .js and .jsx extensions
+        fallback: {
+            path: require.resolve('path-browserify'),
+        },
     },
     devServer: {
         static: './public',
