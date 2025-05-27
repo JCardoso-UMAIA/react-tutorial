@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>React Example 16 - React Hooks</title>
+    <script src="https://unpkg.com/react@18.2.0/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      // Counter component using useState hook
+      function Counter() {
+        const [count, setCount] = React.useState(0);
+        const [step, setStep] = React.useState(1);
+
+        // useEffect hook to log count changes
+        React.useEffect(() => {
+          console.log(`Count changed to: ${count}`);
+        }, [count]);
+
+        return (
+          <div>
+            <h2>Counter: {count}</h2>
+            <button onClick={() => setCount(count + step)}>Increment</button>
+            <button onClick={() => setCount(count - step)}>Decrement</button>
+            <div>
+              <label>Step: </label>
+              <input 
+                type="number" 
+                value={step} 
+                onChange={(e) => setStep(Number(e.target.value))}
+              />
+            </div>
+          </div>
+        );
+      }
+
+      // Timer component using useEffect hook
+      function Timer() {
+        const [time, setTime] = React.useState(new Date());
+
+        React.useEffect(() => {
+          const timer = setInterval(() => {
+            setTime(new Date());
+          }, 1000);
+
+          // Cleanup function
+          return () => clearInterval(timer);
+        }, []);
+
+        return (
+          <div>
+            <h2>Current Time: {time.toLocaleTimeString()}</h2>
+          </div>
+        );
+      }
+
+      // Main App component
+      function App() {
+        return (
+          <div>
+            <h1>React Hooks Example</h1>
+            <Counter />
+            <Timer />
+          </div>
+        );
+      }
+
+      // Render the app
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  </body>
+</html> 

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>React Example 18 - React Redux</title>
+    <script src="https://unpkg.com/react@18.2.0/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+    <script src="https://unpkg.com/redux@4.2.1/dist/redux.js"></script>
+    <script src="https://unpkg.com/react-redux@7.2.6/dist/react-redux.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      // Action types
+      const ADD_TODO = 'ADD_TODO';
+      const TOGGLE_TODO = 'TOGGLE_TODO';
+
+      // Action creators
+      const addTodo = (text) => ({
+        type: ADD_TODO,
+        text
+      });
+
+      const toggleTodo = (id) => ({
+        type: TOGGLE_TODO,
+        id
+      });
+
+      // Reducer
+      const todoReducer = (state = [], action) => {
+        switch (action.type) {
+          case ADD_TODO:
+            return [
+              ...state,
+              {
+                id: Date.now(),
+                text: action.text,
+                completed: false
+              }
+            ];
+          case TOGGLE_TODO:
+            return state.map(todo =>
+              todo.id === action.id
+                ? { ...todo, completed: !todo.completed }
+                : todo
+            );
+          default:
+            return state;
+        }
+      };
+
+      // Create store
+      const store = Redux.createStore(todoReducer);
+
+      // Todo component
+      function Todo({ todo, onToggle }) {
+        return (
+          <li
+            onClick={onToggle}
+            style={{
+              textDecoration: todo.completed ? 'line-through' : 'none',
+              cursor: 'pointer'
+            }}
+          >
+            {todo.text}
+          </li>
+        );
+      }
+
+      // TodoList component
+      function TodoList({ todos, onToggleTodo }) {
+        return (
+          <ul>
+            {todos.map(todo => (
+              <Todo
+                key={todo.id}
+                todo={todo}
+                onToggle={() => onToggleTodo(todo.id)}
+              />
+            ))}
+          </ul>
+        );
+      }
+
+      // AddTodo component
+      function AddTodo({ onAddTodo }) {
+        const [text, setText] = React.useState('');
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          if (!text.trim()) return;
+          onAddTodo(text);
+          setText('');
+        };
+
+        return (
+          <form onSubmit={handleSubmit}>
+            <input
+              value={text}
+              onChange={e => setText(e.target.value)}
+              placeholder="Add a new todo"
+            />
+            <button type="submit">Add Todo</button>
+          </form>
+        );
+      }
+
+      // Main App component
+      function App() {
+        const todos = ReactRedux.useSelector(state => state);
+        const dispatch = ReactRedux.useDispatch();
+
+        return (
+          <div style={{ padding: '20px' }}>
+            <h1>React Redux Todo List</h1>
+            <AddTodo onAddTodo={text => dispatch(addTodo(text))} />
+            <TodoList
+              todos={todos}
+              onToggleTodo={id => dispatch(toggleTodo(id))}
+            />
+          </div>
+        );
+      }
+
+      // Wrap App with Provider
+      const ReduxApp = () => (
+        <ReactRedux.Provider store={store}>
+          <App />
+        </ReactRedux.Provider>
+      );
+
+      // Render the app
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<ReduxApp />);
+    </script>
+  </body>
+</html> 

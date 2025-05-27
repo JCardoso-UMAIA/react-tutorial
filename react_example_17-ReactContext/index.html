@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>React Example 17 - React Context</title>
+    <script src="https://unpkg.com/react@18.2.0/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      // Create a theme context
+      const ThemeContext = React.createContext('light');
+
+      // Theme provider component
+      function ThemeProvider({ children }) {
+        const [theme, setTheme] = React.useState('light');
+
+        const toggleTheme = () => {
+          setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+        };
+
+        return (
+          <ThemeContext.Provider value={{ theme, toggleTheme }}>
+            {children}
+          </ThemeContext.Provider>
+        );
+      }
+
+      // Button component using context
+      function ThemedButton() {
+        const { theme, toggleTheme } = React.useContext(ThemeContext);
+        
+        return (
+          <button 
+            onClick={toggleTheme}
+            style={{
+              backgroundColor: theme === 'light' ? '#ffffff' : '#333333',
+              color: theme === 'light' ? '#333333' : '#ffffff',
+              padding: '10px 20px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Toggle Theme ({theme})
+          </button>
+        );
+      }
+
+      // Content component using context
+      function ThemedContent() {
+        const { theme } = React.useContext(ThemeContext);
+        
+        return (
+          <div style={{
+            backgroundColor: theme === 'light' ? '#ffffff' : '#333333',
+            color: theme === 'light' ? '#333333' : '#ffffff',
+            padding: '20px',
+            margin: '20px 0',
+            borderRadius: '4px'
+          }}>
+            <h2>Current Theme: {theme}</h2>
+            <p>This content changes based on the theme context.</p>
+          </div>
+        );
+      }
+
+      // Main App component
+      function App() {
+        return (
+          <ThemeProvider>
+            <div style={{ padding: '20px' }}>
+              <h1>React Context Example</h1>
+              <ThemedButton />
+              <ThemedContent />
+            </div>
+          </ThemeProvider>
+        );
+      }
+
+      // Render the app
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  </body>
+</html> 
